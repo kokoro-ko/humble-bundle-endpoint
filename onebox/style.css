@@ -1,0 +1,180 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    background: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    font-size: 12px;
+}
+
+#widget {
+    border: 4px solid #ff7979;
+    background-color: #efefef;
+    /* height: 146px; */
+    height: 210px;
+    padding: 10px 15px;
+    position: relative;
+    margin: 0 auto;
+    /* background-repeat: no-repeat;
+    background-position: top right; */
+}
+
+#widget h1.main_text {
+    color: #fefefe;
+    font-family: "Motiva Sans", Sans-serif;
+    font-weight: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    /* max-width: 425px; */
+}
+
+#widget h1 {
+    font-size: 23px;
+    font-weight: normal;
+    vertical-align: top;
+    display: inline-block;
+    line-height: 28px;
+    margin-left: 10px;
+}
+
+a,
+a:hover {
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+    color: #000000;
+}
+
+#header>.main_text>a {
+    font-weight: bold;
+}
+
+#widget h1 em {
+    font-weight: normal;
+    font-style: normal;
+    color: #9e9e9e;
+    font-family: "Motiva Sans", Sans-serif;
+    font-weight: 300;
+}
+
+#widget .desc {
+    margin: 10px 10px 0 0;
+    font-size: 13px;
+    color: #000000;
+    line-height: 16px;
+    /* max-height: 96px; */
+    overflow: hidden;
+    /* text-shadow: 1px 0px 1px #9c9c9c; */
+}
+
+#widget .lower_button {
+    position: absolute;
+    bottom: -20px;
+    right: 10px;
+}
+
+.lower_button_bg {
+    height: 34px;
+    background-color: #3c3d3e;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-top: 3px solid #ff7979;
+    border-bottom: 3px solid #ff7979;
+    margin-left: -3px;
+    float: left;
+}
+
+.lower_button_bg:first-of-type {
+    border-left: 3px solid #ff7979;
+}
+
+.lower_button_bg:last-of-type {
+    border-right: 3px solid #ff7979;
+}
+
+.lower_button .lower_button_content {
+    font-size: 13px;
+    padding-top: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
+    height: 26px;
+    color: #eee;
+}
+
+.btn_addtocart {
+    float: left;
+    margin-left: 3px;
+    position: relative;
+    height: 34px;
+}
+
+.btn_addtocart .btn_addtocart_content {
+    display: inline-block;
+    height: 34px;
+    font-size: 11px;
+    color: #ffffff;
+    text-align: center;
+    padding: 0px 11px;
+    line-height: 34px;
+    /* background-image: url(https://steamstore-a.akamaihd.net/public/images/v5/btn_addtocart_repeat.gif); */
+    background-repeat: repeat-x;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.lower_button .lower_button_content,
+.lower_button .lower_button_bg .lower_button {
+    float: left;
+    margin-left: 3px;
+    font-size: 11px;
+}
+
+.error_msg {
+    padding: 20px;
+    color: #fb4848;
+    text-align: center;
+    background-color: #3a3a3a;
+}
+
+#widget .capsule {
+    float: left;
+    margin: 2px 10px 10px 0;
+    background-size: cover;
+    /* height: 158px;
+    width: 119px; */
+    height: 147px;
+    width: 93px;
+    background-position-x: 50%;
+    box-shadow: 2px 2px 3px 0px #000;
+}
+
+img {
+    border: none;
+}
+
+.text_desc {
+    text-align: justify;
+    text-overflow: ellipsis;
+    /* max-height: 65px !important; */
+    max-height: 145px !important;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+.api_logo {
+    width: auto;
+    position: absolute;
+    height: 28px;
+    right: 25px;
+    top: 12px;
+}
+
+.lower_button_content>b {
+    color: #ff7979;
+}
