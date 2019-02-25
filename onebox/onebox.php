@@ -1,4 +1,5 @@
 <?php
+    header('Content-type: text/html; charset=UTF-8');
     include_once dirname(__DIR__)."/env.php";
     class Onebox
     {
@@ -91,7 +92,11 @@
                 $this->drawInfoButton('<b>Episodes:</b> '.$dataAr["episodes"]);
                 $this->drawInfoButton('<b>Status:</b> '.$dataAr["status"]);
                 $this->drawInfoButton('<b>Rating:</b> '.$dataAr["score"]);
-                $this->drawInfoButton('<b>Release:</b> '.$dataAr["start"]." - ".$dataAr["end"]);
+                $dates = $dataAr["start"];
+                if(isset($dataAr["end"]) && $dataAr["end"] !== null){
+                    $dates .= " - " . $dataAr["end"];
+                }
+                $this->drawInfoButton('<b>Release:</b> '.$dates);
             }else{
                 $this->drawInfoButton('<b>Volumes:</b> '.$dataAr["volumes"]);
                 $this->drawInfoButton('<b>Chapter:</b> '.$dataAr["chapter"]);
@@ -144,14 +149,12 @@
         
         private function malRetrieveData($apiType,$name,$id, &$resultData){
             $this->apiMap["mal"]["url"] = "https://myanimelist.net/".$apiType."/".$id."/".$name;
-            $host = "https://myanimelist.net/api/".$apiType."/search.xml?q=".$name;
+            $host = "https://api.jikan.moe/v3/".$apiType."/".$id;
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_RETURNTRANSFER => TRUE,
                 CURLOPT_URL => $host,
-                CURLOPT_FOLLOWLOCATION => TRUE,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_USERPWD => BOT_USERNAME.":".BOT_PW
+                CURLOPT_HEADER => FALSE
             ));
             $resp = curl_exec($curl);
 
@@ -159,36 +162,38 @@
                 echo 'Curl error: ' . curl_error($curl);
             }
             curl_close($curl);
+            $singleObj = json_decode($resp);
 
-            $parsedXmlObject = new SimpleXMLElement($resp);
-            
-            foreach ($parsedXmlObject as $singleObj) {
-                if($singleObj->id == $id){
-                    if($apiType == "anime"){
-                        $resultData["name"] = $singleObj->title;
-                        $resultData["en_name"] = $singleObj->english;
-                        $resultData["desc"] = $singleObj->synopsis;
-                        $resultData["start"] = date("d.m.Y",strtotime($singleObj->start_date));
-                        $resultData["end"] = date("d.m.Y",strtotime($singleObj->end_date));
-                        $resultData["status"] = $singleObj->status;
-                        $resultData["score"] = $singleObj->score;
-                        $resultData["episodes"] = $singleObj->episodes;
-                        $resultData["img_url"] = $singleObj->image;
-                    }else{
-                        $resultData["chapter"] = $singleObj->chapters;
-                        $resultData["volumes"] = $singleObj->volumes;
-                        $resultData["name"] = $singleObj->title;
-                        $resultData["en_name"] = $singleObj->english;
-                        $resultData["desc"] = $singleObj->synopsis;
-                        $resultData["start"] = date("d.m.Y",strtotime($singleObj->start_date));
-                        $resultData["end"] = date("d.m.Y",strtotime($singleObj->end_date));
-                        $resultData["status"] = $singleObj->status;
-                        $resultData["score"] = $singleObj->score;
-                        $resultData["img_url"] = $singleObj->image;
+            if($singleObj != null){
+                if(!isset($singleObj->error)){
+                    if($singleObj->mal_id == $id){
+                        if($apiType == "anime"){
+                            $resultData["name"] = $singleObj->title_japanese;
+                            $resultData["en_name"] = $singleObj->title_english;
+                            $resultData["desc"] = $singleObj->synopsis;
+                            $resultData["start"] = date("d.m.Y",strtotime($singleObj->aired->from));
+                            $resultData["end"] = ($singleObj->aired->to != "") ? date("d.m.Y",strtotime($singleObj->aired->to)) : null;
+                            $resultData["status"] = $singleObj->status;
+                            $resultData["score"] = $singleObj->score;
+                            $resultData["episodes"] = $singleObj->episodes;
+                            $resultData["img_url"] = $singleObj->image_url;
+                        }else{
+                            $resultData["chapter"] = $singleObj->chapters;
+                            $resultData["volumes"] = $singleObj->volumes;
+                            $resultData["name"] = $singleObj->title;
+                            $resultData["en_name"] = $singleObj->title_english;
+                            $resultData["desc"] = $singleObj->synopsis;
+                            $resultData["start"] = date("d.m.Y",strtotime($singleObj->published->from));
+                            $resultData["end"] = ($singleObj->published->to != "") ? date("d.m.Y",strtotime($singleObj->published->to)) : null;
+                            $resultData["status"] = $singleObj->status;
+                            $resultData["score"] = $singleObj->score;
+                            $resultData["img_url"] = $singleObj->image_url;
+                        }
+                        return true;
                     }
-                    return true;
                 }
             }
+
             return false;
         }
 
