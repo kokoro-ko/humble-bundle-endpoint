@@ -299,12 +299,21 @@
                             case 'Vintage':
                                 $dates = explode(" to ",$info);
                                 $resultData["start"] = date("d.m.Y",strtotime($dates[0]));
-                                isset($dates[1]) ? $resultData["end"] = date("d.m.Y",strtotime($dates[1])) : $resultData["end"] = "NaN";
-                                
+                                isset($dates[1]) ? $resultData["end"] = date("d.m.Y",strtotime($dates[1])) : $resultData["end"] = null;
+                                if($value->attributes()->type == "movie"){
+                                    if(strtotime($resultData["start"]) < time()){
+                                        $resultData["status"] = "Finished Airing";
+                                    }else{
+                                        $resultData["status"] = "Ongoing/Not Started";
+                                    }
+                                }
                             break;
                             default:
                                 break;
                         }
+                    }
+                    if($value->attributes()->type == "movie"){
+                        $resultData["episodes"] = 1;
                     }
                     $resultData["score"] = $value->ratings["weighted_score"];
                 }
