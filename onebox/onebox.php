@@ -1,6 +1,5 @@
 <?php
     header('Content-type: text/html; charset=UTF-8');
-    include_once dirname(__DIR__)."/env.php";
     class Onebox
     {
         private $apiMap = array(
