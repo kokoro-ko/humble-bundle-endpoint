@@ -30,22 +30,13 @@
 
             if(isset($_GET["api"])){
                 $oneBoxType = $_GET["api"];
-                switch ($oneBoxType) {
-                    case 'mal':
+                if($oneBoxType == "mal" || $oneBoxType == "ann"){
                     isset($_GET["type"]) ? $apiType = $_GET["type"] : $apiType = null;
-                    isset($_GET["name"]) ? $apiName = $_GET["name"] : $apiName = null;
                     isset($_GET["id"]) ? $apiId = $_GET["id"] : $apiId = null;
-                    $this->retrieveData($oneBoxType,$apiType,$apiName,$apiId);
-                break;
-                case 'ann':
-                    isset($_GET["id"]) ? $apiId = $_GET["id"] : $apiId = null;
-                    isset($_GET["type"]) ? $apiType = $_GET["type"] : $apiType = null;
-                    $this->retrieveData($oneBoxType,$apiType,"",$apiId);
-                break;
-                default:
+                    $this->retrieveData($oneBoxType,$apiType,$apiId);
+                }else{
                     $this->printErrorMsg("Wrong Onebox-Type given!");
                     return;
-                    break;
                 }
             }else{
                 $this->printErrorMsg("No Onebox-Type given!");
@@ -116,8 +107,8 @@
             echo '<div class="lower_button_bg"><div class="lower_button_content">'.$content.'</div></div>';
         }
 
-        private function retrieveData($api,$_apiType,$_name,$_id){
-            if(!($_apiType !== null && $_name !== null && $_id !== null)){
+        private function retrieveData($api,$_apiType,$_id){
+            if(!($_apiType !== null && $_id !== null)){
                 $this->printErrorMsg("Missing parameter!");
                 return;
             }
@@ -136,7 +127,7 @@
             );
             $foundSomething = false;
             $funcName = $api."RetrieveData";
-            $foundSomething = $this->$funcName($_apiType,$_name,$_id, $resultData);
+            $foundSomething = $this->$funcName($_apiType,$_id, $resultData);
             
             if($foundSomething){
                 $this->printOneBox($resultData);
@@ -146,8 +137,8 @@
             
         }
         
-        private function malRetrieveData($apiType,$name,$id, &$resultData){
-            $this->apiMap["mal"]["url"] = "https://myanimelist.net/".$apiType."/".$id."/".$name;
+        private function malRetrieveData($apiType,$id, &$resultData){
+            
             $host = "https://api.jikan.moe/v3/".$apiType."/".$id;
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -188,6 +179,7 @@
                             $resultData["score"] = $singleObj->score;
                             $resultData["img_url"] = $singleObj->image_url;
                         }
+                        $this->apiMap["mal"]["url"] = $singleObj->url;
                         return true;
                     }
                 }
@@ -196,7 +188,7 @@
             return false;
         }
 
-        private function annRetrieveData($apiType,$name,$id, &$resultData){
+        private function annRetrieveData($apiType,$id, &$resultData){
             $this->apiMap["ann"]["url"] = "http://www.animenewsnetwork.com/encyclopedia/".$apiType.".php?id=".$id;
             $host = "https://cdn.animenewsnetwork.com/encyclopedia/api.xml?".$apiType."=".$id;
 
