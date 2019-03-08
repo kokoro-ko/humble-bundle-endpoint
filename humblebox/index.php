@@ -32,17 +32,8 @@ class humble_box_bundle
 				  src="https://code.jquery.com/jquery-3.2.1.js"
 				  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
 				  crossorigin="anonymous"></script>
-				<link 
-					href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-					rel="stylesheet"
-					integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-					crossorigin="anonymous">
-				<script 
-					src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-					integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-					crossorigin="anonymous"></script>
-					<link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
-					<link href="style.css" rel="stylesheet">
+				<link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
+				<link href="style.css" rel="stylesheet">
 			</head>
 			<body>
 		<?php
@@ -78,13 +69,21 @@ class humble_box_bundle
 		}
 
 
-		$inc = file_get_contents($url);
+		$inc = mb_convert_encoding(file_get_contents($url),'HTML-ENTITIES', "UTF-8");
 	
 		// $length = stripos($inc, '<div class="hr-main-container">');
 		// $inc = substr_replace($inc, "", 0, $length);
 
 		$length = stripos($inc, '</head>');
 		$inc = substr_replace($inc, "", 0, $length);
+
+		while (stripos($inc, '<script') > 0) {
+			$length = stripos($inc, '</script>');
+			$startpos = stripos($inc, '<script');
+			$inc = substr_replace($inc, "", $startpos, $length);
+		}
+		
+
 		// $start = stripos($inc, '<div class="hs-mailing-list-main main-content-row">');
 		// $inc = substr_replace($inc, "", $start, strlen($inc));
 		echo '<seed>' . $inc . '</div></seed>';
@@ -94,8 +93,8 @@ class humble_box_bundle
 	private function buildSmartBox(){
 		?>
 			<div class="container-fluid">
-				<img class="icon img-responsive pull-right" src="https://pbs.twimg.com/profile_images/609471525863976960/r3m_pjpj.png"></img>
-				<div id="header"><?php echo(strtoupper(str_replace("-", " ", $this->title))); ?></div>
+				<img class="icon img-responsive pull-right" src="hb.ico"></img>
+				<div id="header"><?php echo(strtoupper(str_replace("-", " ", $this->title))); ?><small><span id="ctCur"></span> / <span id="ctAll"></span></small></div>
 				<div class="row">
 					<div class="over">This Bundle is over!</div>
 				</div>
@@ -135,7 +134,6 @@ $box = new humble_box_bundle();
 		
 	
 		$(".hr-main-container").remove();
-
 		var insert = "";
 		var moneyRegExp = /\$(.*?)\ /;
 		$(".dd-game-row").each(function(i, el){
@@ -146,9 +144,9 @@ $box = new humble_box_bundle();
 			$(el).find(".game-boxes").each(function(oI, oEl){
 				var name = $(oEl).find(".dd-image-box-caption.dd-image-box-text").text();
 				var picture = $(oEl).find(".dd-image-box-figure-img").data("retina-src");
-				name = name.replace(/  /g,"").replace(/(?:\r\n|\r|\n)/g,"");
-				insert += '<div><img class="img-responsive img-box" src="'+picture+'"></img>';
-				insert += '<div><small class="price">'+price+'+</small><h4>'+name+'</h4>';
+				name = name.replace(/  /g,"").replace(/(?:\r\n|\u00A0|\r|\n)/g,"");
+				insert += '<div><div class="objImg" style="background-image:url('+picture+');"></div>';
+				insert += '<div class="objContent"><small class="price">'+price+'+</small><h4>'+name+'</h4>';
 				subtitle = "";
 				if($(oEl).find(".subtitle").length > 0){
 					subtitle = $(oEl).find(".subtitle").html();
@@ -165,8 +163,10 @@ $box = new humble_box_bundle();
 		function fadeDiv(elem) {
 			elem.delay().fadeIn().delay(1500).fadeOut(500, function () {
 				if (elem.next().length > 0) {
+					$("#ctCur").text(elem.next().index()+1);
 					fadeDiv(elem.next());
 				} else {
+					$("#ctCur").text(1);
 					fadeDiv(elem.siblings(':first'));
 				}
 			});
@@ -175,6 +175,8 @@ $box = new humble_box_bundle();
 		function initFade(){
 			$('.container-fluid > .row > div').hide();
 			fadeDiv($('.container-fluid > .row > div:first'));
+			$("#ctAll").text($('.container-fluid > .row > div').length);
+			$("#ctCur").text(1);
 		}
 
 		$(document).ready(function(){

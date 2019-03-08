@@ -1,4 +1,4 @@
-# humble-bundle-endpoint
+# onebox-endpoint
 
 
 ### Features
@@ -16,3 +16,15 @@ MyAnimeList Endpoint based on https://jikan.moe/
 ### Example for AnimeNewsNetwork
 - Manga: https://api.kokoro-ko.de/onebox/onebox.php?api=ann&type=manga&id=2298
 - Anime: https://api.kokoro-ko.de/onebox/onebox.php?api=ann&type=anime&id=877
+
+
+### Example for Humblebundle
+- Games: https://api.kokoro-ko.de/humblebox/index.php?type=games&urlCode=humble-indie-bundle-20
+
+
+#### TO-DOs:
+- Humblebundle Links are cached to improve the loading times in the next few
+- Humblebundle-Book
+- Humblebundle-Monthly
+- Humblebundle-Software
+- Humblebundle-Comics
