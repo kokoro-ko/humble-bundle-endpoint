@@ -38,7 +38,7 @@ seed {
 
 .objImg {
     height: 100%;
-    min-width: 300px;
+    min-width: 200px;
     background: black;
     /* background-image: url(https://hb.imgix.net/45cfc7ab093b99ed6ac3d8e421a76a6329ebc975.jpg?auto=compress,format&dpr=1&fit=clamp&h=177&w=308&s=f0489428fd51c9920d41f4a5a862bf6e); */
     background-position: center;
@@ -71,7 +71,7 @@ seed {
 .container-fluid>.row>div>div.objContent {
     margin-left: 10px;
     color: #424242;
-    width: calc(100% - 310px);
+    width: calc(100% - 210px);
 }
 
 .container-fluid>.row>div>div.objContent>.price {
