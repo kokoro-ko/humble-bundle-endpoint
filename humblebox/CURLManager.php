@@ -5,7 +5,7 @@ class CURLManager
     public function __construct() {
     }
 
-    public function getContents($url, $never_cache_again, $skip_cache = FALSE, $cachetime = 604800){
+    public function getContents($url, $never_cache_again = FALSE, $skip_cache = FALSE, $cachetime = 604800){
         return $this->cache_url($url, $skip_cache, $never_cache_again, $cachetime);
     }
 
@@ -37,7 +37,7 @@ class CURLManager
             if(file_exists($file)){
                 $data = file_get_contents($file);
             }else{
-                $data = "NO EXIST";
+                $data = $this->cache_url($url, true, false, $cachetime);
             }
             
         }

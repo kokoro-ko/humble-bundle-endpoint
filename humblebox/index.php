@@ -213,7 +213,7 @@ $box = new humble_box_bundle();
 		}else{
 			//store item
 			var mObj = storeObj;
-			if(typeof storeObj == "array"){
+			if(storeObj[0] != undefined){
 				mObj = storeObj[0];
 			}
 			var name = mObj.human_name;
