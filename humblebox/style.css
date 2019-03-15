@@ -59,12 +59,21 @@ seed {
     /* IE6-9 fallback on horizontal gradient */
 }
 
-.container-fluid>.row>div {
+.over > .over-information {
+
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.container-fluid>.row {
     width: 100%;
     height: 110px;
 }
 
-.container-fluid>.row>div>* {
+.container-fluid>.row>div.gObj>* {
     float: left;
 }
 
@@ -76,7 +85,7 @@ seed {
 
 .container-fluid>.row>div>div.objContent>.price {
     border-left: 4px solid #ff7979;
-    width: 60px;
+    min-width: 60px;
     color: #424242;
     padding: 7px;
     /* font-family: 'Russo One'; */
@@ -86,6 +95,16 @@ seed {
     float: right;
     margin-right: -4px;
     text-align: center;
+}
+
+.objDescription{
+    height: 46px;
+    font-size: 12px;
+}
+
+.price-strike {
+    color: red !important;
+    text-decoration: line-through
 }
 
 h4 {
@@ -109,12 +128,15 @@ body {
 }
 
 .over {
-    display: none;
-    text-align: center;
     font-family: 'Russo One';
-    font-size: 25px;
-    margin-top: 10px;
+    font-size: 17px;
     color: #444444;
+    padding: 15px;
+    text-align: center;
+}
+
+.over > img {
+    width: 200px;
 }
 
 #header > small {
