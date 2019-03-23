@@ -14,22 +14,15 @@ class CURLManager
         if ( ! is_dir($where)) {
             mkdir($where);
         }
-        
         $hash = md5($url);
         $file = "$where/$hash.cache";
-        
-        // check the bloody file.
         $mtime = 0;
         if (file_exists($file)) {
             $mtime = filemtime($file);
         }
         $filetimemod = $mtime + $cachetime;
-        
-        // if the renewal date is smaller than now, return true; else false (no need for update)
         if ($filetimemod < time() OR $skip_cache OR $never_cache_again) {
             $data = file_get_contents($url);
-            
-            // save the file if there's data
             if ($data AND ! $skip_cache) {
                 file_put_contents($file, $data);
             }
@@ -39,9 +32,7 @@ class CURLManager
             }else{
                 $data = $this->cache_url($url, true, false, $cachetime);
             }
-            
-        }
-        
+        }        
         return $data;
     }
 }

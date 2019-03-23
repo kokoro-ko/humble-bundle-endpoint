@@ -23,12 +23,9 @@ MyAnimeList Endpoint based on https://jikan.moe/
 - Software: https://api.kokoro-ko.de/humblebox/index.php?type=software&urlCode=your-beats-acidized-software
 - Books: https://api.kokoro-ko.de/humblebox/index.php?type=books&urlCode=linux-wiley-books
 - Comics: COMING ? 
+- Monthly: https://api.kokoro-ko.de/humblebox/index.php?type=monthly&urlCode=CodeNotSet
 
 - Store: https://api.kokoro-ko.de/humblebox/index.php?type=store&urlCode=one-piece-world-seeker 
     + Discounts
     + Freebies
     + Fullprice
-
-
-#### TO-DOs
-- Humblebundle-Monthly

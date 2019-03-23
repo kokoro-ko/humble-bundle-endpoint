@@ -9,7 +9,7 @@ class humble_box_bundle
 	private $title;
 	private $globalUrl = "https://www.humblebundle.com/";
 	private $errorMsg = "<p>Please get back to kokoro-ko.de for help.</p>";
-	private $supportedType = ["games","books","software","comics","store"];
+	private $supportedType = ["games","books","software","comics","store","monthly"];
 	private $cm;
 	private $neverCacheAgain = false;
 	private $cachetime = 604800;
@@ -63,23 +63,28 @@ class humble_box_bundle
 		$this->title = $_GET["urlCode"];
 		$this->type = $_GET["type"];
 
-		$url = $this->globalUrl.$this->type."/".$this->title;
-		if($this->get_http_response_code($url) != "200"){
-			$this->printErrorMsg("Wrong urlCode. ");
-			return false;
-		}
-
 		if (!in_array($this->type,$this->supportedType) && $_GET["isOld"] != "old_url")  {
 			$this->printErrorMsg("Wrong Type.");
 			return false;
+		}else if($this->type == "monthly"){
+			$this->url = $this->globalUrl.$this->type;
+			$this->title = "HUMBLE MONTHLY";
+		}else{
+			$this->url = $this->globalUrl.$this->type."/".$this->title;
+			if($this->get_http_response_code($this->url) != "200"){
+				$this->printErrorMsg("Wrong urlCode. ");
+				return false;
+			}
 		}
 		
 		if($this->type == "store"){
-			$this->cachetime = 4800;
+			//one day
+			$this->cachetime = 86400;
 		}else{
+			//one week
 			$this->cachetime = 604800;
 		}
-		$inc = mb_convert_encoding($this->cm->getContents($url,$this->neverCacheAgain,false,$this->cachetime),'HTML-ENTITIES', "UTF-8");
+		$inc = mb_convert_encoding($this->cm->getContents($this->url,$this->neverCacheAgain,false,$this->cachetime),'HTML-ENTITIES', "UTF-8");
 		if($this->type == "store"){
 			$storeObj = array(0 => null);
 			if(stripos($inc, 'freebie-landing-page') > 0){
@@ -98,6 +103,26 @@ class humble_box_bundle
 				}
 			}
 			echo "<script>var storeObj = ".$storeObj.";</script>";
+		}else if($this->type == "monthly"){
+			$monthlyObj = array(0 => null);
+			$monthlyImageObj = array();
+			$sub = explode('"subscribeButtonOptions"',explode('"earlyUnlocks" :',$inc)[1]);
+			if(isset($sub[0])){
+				$myObj = $sub[0];
+				$myObj = rtrim(ltrim($myObj));
+				$monthlyObj = substr($myObj, 0, strlen($myObj)-2 );
+			}
+
+			$sub = explode('"earlyUnlocks"',explode('"earlyUnlockImageUrls" :',$inc)[1]);
+			if(isset($sub[0])){
+				$myObj = $sub[0];
+				$myObj = rtrim(ltrim($myObj));
+				$monthlyImageObj = substr($myObj, 0, strlen($myObj)-1 );
+			}
+			
+
+			echo "<script>var monthlyObj = ".$monthlyObj.";</script>";
+			echo "<script>var monthlyImageObj = ".$monthlyImageObj.";</script>";
 		}else{
 			$length = stripos($inc, '</head>');
 			$inc = substr_replace($inc, "", 0, $length);
@@ -166,7 +191,7 @@ $box = new humble_box_bundle();
 <script type="text/javascript">
 
 	if($(".over").length == 0){
-		if(typeof storeObj == 'undefined'){
+		if(typeof storeObj == 'undefined' && typeof monthlyObj == 'undefined'){
 			//normal bundles
 			$(".hr-main-container").remove();
 			var insert = "";
@@ -187,30 +212,10 @@ $box = new humble_box_bundle();
 			})
 
 			$(".row").html(insert);
-
-			function fadeDiv(elem) {
-				elem.delay().fadeIn().delay(1500).fadeOut(500, function () {
-					if (elem.next().length > 0) {
-						$("#ctCur").text(elem.next().index()+1);
-						fadeDiv(elem.next());
-					} else {
-						$("#ctCur").text(1);
-						fadeDiv(elem.siblings(':first'));
-					}
-				});
-			}
-
-			function initFade(){
-				$('.container-fluid > .row > div').hide();
-				fadeDiv($('.container-fluid > .row > div:first'));
-				$("#ctAll").text($('.container-fluid > .row > div').length);
-				$("#ctCur").text(1);
-			}
-
 			$(document).ready(function(){
 				initFade();
 			});
-		}else{
+		}else if(typeof storeObj != 'undefined'){
 			//store item
 			var mObj = storeObj;
 			if(storeObj[0] != undefined){
@@ -237,12 +242,48 @@ $box = new humble_box_bundle();
 
 			$(".row").html(insert);
 			$("#header > small").hide();
+		}else if(typeof monthlyObj != 'undefined'){
+			var insert = "";
+
+			monthlyObj.forEach(function(el, i){
+				var cuttedDescription = $.parseHTML(el["description-text"].replace("<br>"));
+				cuttedDescription = $(cuttedDescription).remove("img").remove("ul");
+				cuttedDescription = $(cuttedDescription).text().substr(0, 100) + '..';
+				insert += '<div class="gObj"><div class="objImg" style="background-image:url('+monthlyImageObj[i]+');"></div>';
+				insert += '<div class="objContent"><h4>'+el["human-name"]+'</h4>';
+				insert += '<div class="objDescription">'+cuttedDescription+'</div>';
+				insert += '</div></div>';
+			});
+
+			$(".row").html(insert);
+			$(document).ready(function(){
+				initFade();
+			});
 		}
 	}else{
 		$(".row").html("<div class='over'><img src='"+$("img.promo-logo").attr("src")+"'>"+$(".over-information").html()+"</div>");
 		$("#header > small").hide();
 		
 	}
+
 	
+	function fadeDiv(elem) {
+		elem.delay().fadeIn().delay(1500).fadeOut(500, function () {
+			if (elem.next().length > 0) {
+				$("#ctCur").text(elem.next().index()+1);
+				fadeDiv(elem.next());
+			} else {
+				$("#ctCur").text(1);
+				fadeDiv(elem.siblings(':first'));
+			}
+		});
+	}
+
+	function initFade(){
+		$('.container-fluid > .row > div').hide();
+		fadeDiv($('.container-fluid > .row > div:first'));
+		$("#ctAll").text($('.container-fluid > .row > div').length);
+		$("#ctCur").text(1);
+	}
 	
 </script>
